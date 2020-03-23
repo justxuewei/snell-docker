@@ -1,0 +1,44 @@
+name: Publish Docker
+on: 
+  push: 
+    tags:
+      - '*'
+jobs:
+  latest-and-amd64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: DockerHub login
+        env: 
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin
+      - name: Set up docker buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          version: latest
+      - name: Get tag name
+        id: tagName
+        uses: olegtarasov/get-tag@v2
+      - name: Build Dockerfile and push to DockerHub
+        run: |
+          REPO_NAME=${{ secrets.DOCKER_REPOSITORY }}
+          docker buildx build \
+            --platform linux/amd64 \
+            -t ${REPO_NAME}:latest -t ${REPO_NAME}:amd64 $([[ -z "${GIT_TAG_NAME}" ]] && echo "" || echo "-t ${REPO_NAME}:${GIT_TAG_NAME} -t ${REPO_NAME}:${GIT_TAG_NAME}-amd64")  \
+            --push \
+            . -f Dockerfile
+  sync-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Sync README.md
+        uses: peter-evans/dockerhub-description@v2.1.0
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKERHUB_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
