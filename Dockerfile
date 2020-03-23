@@ -1,4 +1,4 @@
-ARG SNELL_VERSION=2.0.0-b5
+ARG SNELL_VERSION=2.0.0-b7
 ARG GLIBC_VERSION=2.29-r0
 
 # get snell version
