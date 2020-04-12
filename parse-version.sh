@@ -21,15 +21,18 @@ fi
 # example
 # 1. MAIN_VERSION=1.1.1 -> "https://github.com/surge-networks/snell/releases/download/v${MAIN_VERSION}/snell-server-v${MAIN_VERSION}-linux-amd64.zip"
 # 2. MAIN_VERSION=2.0.0, BETA_VERSION=b3 -> "https://github.com/surge-networks/snell/releases/download/${MAIN_VERSION}${BETA_VERSION}/snell-server-v${MAIN_VERSION}-${BETA_VERSION}-linux-amd64.zip"
-if [[ "${MAIN_VERSION}" =~ ^(1.*)$ ]] || [[ "${MAIN_VERSION}" == "2.0.1"$ ]]; then
+if [[ "${MAIN_VERSION}" =~ ^(1.*)$ ]]; then
   echo "[INFO] Snell 1.x.x is matched: main version(${MAIN_VERSION})"
   SNELL_URL="https://github.com/surge-networks/snell/releases/download/v${MAIN_VERSION}/snell-server-v${MAIN_VERSION}-linux-amd64.zip"
 elif [[ "${MAIN_VERSION}" == "2.0.0" ]] && [[ ! -z "${BETA_VERSION}" ]]; then
   echo "[INFO] Snell 2.0.0 beta is matched: main version(${MAIN_VERSION}, beta version: ${BETA_VERSION})"
   SNELL_URL="https://github.com/surge-networks/snell/releases/download/${MAIN_VERSION}${BETA_VERSION}/snell-server-v${MAIN_VERSION}-${BETA_VERSION}-linux-amd64.zip"
-elif [[ "${MAIN_VERSION}" =~ ^(2.*)$ ]] && [[ -z "${BETA_VERSION}" ]]; then
+elif [[ "${MAIN_VERSION}" == "2.0.0" ]] && [[ -z "${BETA_VERSION}" ]]; then
   echo "[INFO] Snell 2.x.x release is matched: main version(${MAIN_VERSION})"
   SNELL_URL="https://github.com/surge-networks/snell/releases/download/${MAIN_VERSION}/snell-server-v${MAIN_VERSION}-linux-amd64.zip"
+elif [[ "${MAIN_VERSION}" == "2.0.1" ]] && [[ -z "${BETA_VERSION}" ]]; then
+  echo "[INFO] Snell 2.x.x release is matched: main version(${MAIN_VERSION})"
+  SNELL_URL="https://github.com/surge-networks/snell/releases/download/v${MAIN_VERSION}/snell-server-v${MAIN_VERSION}-linux-amd64.zip"
 else
   echo "[ERROR] No Snell version is matched."
   SNELL_URL=""
